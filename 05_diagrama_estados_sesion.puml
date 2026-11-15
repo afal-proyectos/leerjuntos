@@ -1,0 +1,56 @@
+@startuml 05_estados_sesion
+skinparam state {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+[*] --> INACTIVA : Abrir Vista de Lectura
+
+state INACTIVA {
+    INACTIVA : Libro seleccionado
+    INACTIVA : Esperando ingreso de página inicial
+}
+
+state LEYENDO {
+    LEYENDO : inicio_utc registrado
+    LEYENDO : Conteo de tiempo activo (Timestamp UTC)
+}
+
+state PAUSADA {
+    PAUSADA : Registro de inicio_pausa
+    PAUSADA : Acumulando minutos_pausa
+}
+
+state FINALIZADA {
+    FINALIZADA : fin_utc registrado
+    FINALIZADA : Esperando ingreso de pagina_fin
+    FINALIZADA : Captura opcional de nota/audio (spoiler flag)
+}
+
+state GUARDADA {
+    GUARDADA : Cálculo de velocidad (ppm) y proyecciones
+    GUARDADA : Persistencia vía IRepositorioDatos (JSON / Supabase)
+}
+
+' Transiciones desde INACTIVA
+INACTIVA --> LEYENDO : iniciar_sesion(libro_id, pagina_inicio)\n[pagina_inicio <= total_paginas] / capturar inicio_utc
+
+' Transiciones de Pausa y Reanudación
+LEYENDO --> PAUSADA : pausar_sesion() / capturar inicio_pausa
+PAUSADA --> LEYENDO : reanudar_sesion() / sumar tiempo a minutos_pausa
+
+' Transiciones a FINALIZADA
+LEYENDO --> FINALIZADA : detener_sesion() / capturar fin_utc
+PAUSADA --> FINALIZADA : detener_sesion() / capturar fin_utc
+
+' Transiciones de Cierre y Cancelación
+FINALIZADA --> GUARDADA : guardar_sesion(pagina_fin, nota)\n[pagina_fin >= pagina_inicio Y pagina_fin <= total_paginas] / procesar métricas
+FINALIZADA --> INACTIVA : cancelar() / descartar sesión
+
+LEYENDO --> INACTIVA : cancelar() / descartar sesión
+PAUSADA --> INACTIVA : cancelar() / descartar sesión
+
+GUARDADA --> [*] : Retornar a Biblioteca / Menú Principal
+
+@enduml

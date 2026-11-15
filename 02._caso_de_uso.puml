@@ -1,0 +1,59 @@
+@startuml 02_caso_de_uso
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Lector" as lector
+actor "Administrador de Grupo Lector" as admin
+actor "Servicio Supabase" as supabase << System >>
+actor "API Libros (OpenLibrary)" as api_libros << System >>
+
+' El Administrador de Grupo Lector hereda los casos de uso del Lector
+admin --|> lector
+
+rectangle "Sistema LeerJuntos" {
+    usecase "Administrar Cuenta de Usuario" as UC_Admin
+    usecase "Crear, Iniciar, Modificar y Borrar Cuenta" as UC_Admin_tareas
+    usecase "Registrar Libro Personal" as UC_RegLibro
+    usecase "Consultar Portada Externa" as UC_Portada
+    usecase "Señalar Páginas Inicial y Final de Sesión" as UC_Pagina
+    usecase "Iniciar / Pausar / Parar Cronómetro de Lectura" as UC_Cronometro
+    usecase "Calcular Métricas y Proyecciones" as UC_Sesion
+    usecase "Consultar Métricas y Proyecciones" as UC_ConsultarMetricas
+    usecase "Grabar Nota de Voz (Filtro Spoiler)" as UC_Audio
+    usecase "Crear y Administrar Grupo Lector" as UC_CrearGrupo
+    usecase "Unirse a Grupo Lector (Código 6 dígitos)" as UC_UnirseGrupo
+    usecase "Ver Tablero de Avance Cruzado" as UC_Tablero
+    usecase "Enviar Ánimos y Stickers" as UC_Animos
+    usecase "Escribir en Chat Grupal" as UC_chat
+    usecase "Moderar Chat Grupal" as UC_chat_mod
+}
+
+' Interacciones del Lector
+lector --> UC_Admin
+lector --> UC_RegLibro
+lector --> UC_Pagina
+lector --> UC_Cronometro
+lector --> UC_ConsultarMetricas
+lector --> UC_Audio
+lector --> UC_UnirseGrupo
+lector --> UC_Tablero
+lector --> UC_Animos
+lector --> UC_chat
+
+' Interacciones exclusivas del Administrador de Grupo Lector
+admin --> UC_CrearGrupo
+admin --> UC_chat_mod
+
+' Relaciones de inclusión
+UC_Admin ..> UC_Admin_tareas : <<include>>
+UC_RegLibro ..> UC_Portada : <<include>>
+UC_Pagina ..> UC_Sesion : <<include>>
+UC_Cronometro ..> UC_Sesion : <<include>>
+
+' Interacciones con Servicios Externos / Nube
+UC_Admin_tareas --> supabase
+UC_Portada --> api_libros
+UC_Audio --> supabase
+UC_Tablero --> supabase
+UC_chat --> supabase
+@enduml

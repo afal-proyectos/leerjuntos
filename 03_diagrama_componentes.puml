@@ -1,0 +1,59 @@
+@startuml 03_componentes
+package "Capa de Presentación / UI (Flet - Python)" {
+    [VistaBiblioteca]
+    [VistaDetalleLibro]
+    [VistaSesionActiva]
+    [VistaAgregarLibro]
+    [VistaGrupo]
+    [VistaChatGrupal]
+    [VistaConfiguraciones]
+}
+
+package "Capa de Dominio / Lógica de Negocio" {
+    [ControladorLectura]
+    [GestorBiblioteca]
+    [ServicioMetricasLibro]
+    [ServicioMetricasPersonal]
+    [CalculadorProyecciones]
+    [GestorGrupos]
+    [GestorCuentaUsuario]
+}
+
+package "Capa de Persistencia / Datos" {
+    interface IRepositorioDatos
+    [RepositorioJSON] ..|> IRepositorioDatos
+    [RepositorioSupabase] ..|> IRepositorioDatos
+}
+
+cloud "Servicios Cloud & Externos" {
+    database "Supabase PostgreSQL" as DB
+    [Supabase Auth & Storage] as CloudAuth
+    [API Open Library] as API_Ext
+}
+
+' Relaciones UI -> Lógica de Dominio
+[VistaBiblioteca] --> [ControladorLectura]
+[VistaDetalleLibro] --> [ControladorLectura]
+[VistaSesionActiva] --> [ControladorLectura]
+[VistaAgregarLibro] --> [GestorBiblioteca]
+[VistaGrupo] --> [GestorGrupos]
+[VistaChatGrupal] --> [GestorGrupos]
+[VistaConfiguraciones] --> [GestorCuentaUsuario]
+
+' Relaciones internas de Dominio
+[ControladorLectura] --> [ServicioMetricasLibro]
+[ControladorLectura] --> [ServicioMetricasPersonal]
+[ControladorLectura] --> [CalculadorProyecciones]
+
+' Relaciones Dominio -> Persistencia
+[ControladorLectura] --> IRepositorioDatos
+[GestorBiblioteca] --> IRepositorioDatos
+[GestorGrupos] --> IRepositorioDatos
+[GestorCuentaUsuario] --> IRepositorioDatos
+
+' Relaciones con Servicios Externos / Persistencia
+[GestorBiblioteca] --> API_Ext
+[RepositorioJSON] --> [Archivos .json Locales]
+[RepositorioSupabase] --> DB
+[RepositorioSupabase] --> CloudAuth
+@enduml

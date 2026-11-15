@@ -1,0 +1,132 @@
+@startuml 04_clases
+
+enum EstadoSesion {
+    INACTIVA
+    LEYENDO
+    PAUSADA
+    FINALIZADA
+    GUARDADA
+}
+
+class Usuario {
+    + id_usuario: UUID
+    + email: String
+    + apodo: String
+    + clave: String
+    + rol: String
+    + fecha_registro: datetime
+}
+
+class Libro {
+    + id_libro: UUID
+    + usuario_id: UUID
+    + titulo: String
+    + autor: String
+    + genero: String
+    + total_paginas: int
+    + portada_url: String
+    + calcular_porcentaje_avance(pagina_actual: int): float
+}
+
+class SesionLectura {
+    + id_sesion: UUID
+    + libro_id: UUID
+    + usuario_id: UUID
+    + inicio_utc: datetime
+    + fin_utc: datetime
+    + minutos_pausa: float
+    + pagina_inicio: int
+    + pagina_fin: int
+    + estado: EstadoSesion
+    + calcular_minutos_netos(): float
+    + calcular_paginas_leidas(): int
+    + calcular_velocidad_ppm(): float
+}
+
+class Grupo {
+    + id_grupo: UUID
+    + nombre: String
+    + codigo_acceso: String
+    + admin_id: UUID
+    + fecha_creacion: datetime
+}
+
+class MiembroGrupo {
+    + id_grupo: UUID
+    + id_usuario: UUID
+    + fecha_union: datetime
+}
+
+class Nota {
+    + id_nota: UUID
+    + sesion_id: UUID
+    + usuario_id: UUID
+    + texto: String
+    + audio_url: String
+    + es_spoiler: bool
+    + fecha_creacion: datetime
+}
+
+class Mensaje {
+    + id_mensaje: UUID
+    + grupo_id: UUID
+    + usuario_id: UUID
+    + informacion: String
+    + tipo: String
+    + fecha_envio: datetime
+}
+
+interface IRepositorioDatos {
+    ' Gestión de Usuarios
+    + crear_usuario(usuario: Usuario): bool
+    + obtener_usuario(id_usuario: UUID): Usuario
+    
+    ' Gestión de Libros y Sesiones
+    + guardar_libro(libro: Libro): bool
+    + obtener_libros(usuario_id: UUID): List<Libro>
+    + registrar_sesion(sesion: SesionLectura): bool
+    + obtener_sesiones(libro_id: UUID): List<SesionLectura>
+    
+    ' Gestión de Grupos y Miembros
+    + crear_grupo(grupo: Grupo): bool
+    + obtener_grupo(id_grupo: UUID): Grupo
+    + agregar_miembro(miembro: MiembroGrupo): bool
+    + obtener_miembros(id_grupo: UUID): List<Usuario>
+    
+    ' Gestión de Mensajes y Notas
+    + guardar_nota(nota: Nota): bool
+    + guardar_mensaje(mensaje: Mensaje): bool
+    + obtener_mensajes(grupo_id: UUID): List<Mensaje>
+    + eliminar_mensaje(id_mensaje: UUID): bool
+}
+
+class RepositorioJSON {
+    - ruta_base: String
+    + guardar_libro(libro: Libro): bool
+    + registrar_sesion(sesion: SesionLectura): bool
+    + guardar_mensaje(mensaje: Mensaje): bool
+}
+
+class RepositorioSupabase {
+    - cliente_supabase: SupabaseClient
+    + guardar_libro(libro: Libro): bool
+    + registrar_sesion(sesion: SesionLectura): bool
+    + guardar_mensaje(mensaje: Mensaje): bool
+}
+
+' Relaciones entre Entidades del Dominio
+Usuario "1" -- "0..*" Libro : posee >
+Usuario "1" -- "0..*" SesionLectura : realiza >
+Libro "1" -- "0..*" SesionLectura : pertenece a <
+SesionLectura "1" -- "0..1" Nota : genera >
+Usuario "1" -- "0..*" Mensaje : publica >
+Grupo "1" -- "0..*" Mensaje : contiene >
+
+Usuario "1" -- "0..*" Grupo : administra >
+Usuario "1..*" -- "0..*" Grupo : pertenece a (via MiembroGrupo)
+(Usuario, Grupo) .. MiembroGrupo
+
+' Implementación del Patrón Repositorio
+RepositorioJSON ..|> IRepositorioDatos
+RepositorioSupabase ..|> IRepositorioDatos
+@enduml
