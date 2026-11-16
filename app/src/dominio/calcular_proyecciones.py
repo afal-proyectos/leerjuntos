@@ -1,7 +1,5 @@
 from datetime import UTC, datetime, timedelta
-from typing import Optional
-
-from persistencia.repositorio import IRepositorioDatos
+from typing import Any
 
 from dominio.models_libro import Libro
 from dominio.models_sesion import EstadoSesion, SesionLectura
@@ -47,11 +45,11 @@ class CalculadorProyecciones:
 
     @classmethod
     def estimar_tiempo_restante(
-        self,
+        cls,
         libro: Libro,
         sesiones: list[SesionLectura],
         pagina_actual: int,
-    ) -> dict[str, Optional[object]]:
+    ) -> dict[str, Any]:
         """
         Calcula los minutos restantes y la fecha estimada de finalización del libro
         basándose en la velocidad promedio obtenida de las sesiones históricas.
@@ -66,7 +64,7 @@ class CalculadorProyecciones:
                 "completado": True,
             }
 
-        pares = self.obtener_pares_ordenados(sesiones)
+        pares = cls.obtener_pares_ordenados(sesiones)
         if not pares:
             return {
                 "paginas_restantes": paginas_restantes,
@@ -104,14 +102,15 @@ class CalculadorProyecciones:
         }
 
 
+"""
 class ServicioMetricasLibro:
-    """Calcula indicadores específicos por sesión y por libro."""
+    #Calcula indicadores específicos por sesión y por libro.
 
     @staticmethod
     def calcular_metricas_sesion(
         sesion: SesionLectura, libro: Libro
     ) -> dict[str, float]:
-        """Calcula el rendimiento puntual de una sesión finalizada."""
+        #Calcula el rendimiento puntual de una sesión finalizada
         minutos_netos = sesion.calcular_minutos_netos()
         paginas_leidas = sesion.calcular_paginas_leidas()
         velocidad_ppm = sesion.calcular_velocidad_ppm()
@@ -130,10 +129,10 @@ class ServicioMetricasLibro:
     def evaluar_dificultad_percibida(
         velocidad_sesion_ppm: float, promedio_usuario_ppm: float
     ) -> str:
-        """
-        Determina un indicador cualitativo de dificultad percibida
-        comparando la velocidad de la sesión contra la media histórica del usuario.
-        """
+        
+        #Determina un indicador cualitativo de dificultad percibida
+        #comparando la velocidad de la sesión contra la media histórica del usuario.
+        
         if promedio_usuario_ppm <= 0:
             return "Normal / Estándar"
 
@@ -145,9 +144,10 @@ class ServicioMetricasLibro:
         else:
             return "Exigente / Densa"
 
-
+"""
+"""
 class ServicioMetricasPersonal:
-    """Calcula las métricas acumuladas anuales del usuario (HU-1.4)."""
+    #Calcula las métricas acumuladas anuales del usuario (HU-1.4).
 
     @staticmethod
     def calcular_acumulado_anual(
@@ -188,12 +188,13 @@ class ServicioMetricasPersonal:
             "total_sesiones_anual": len(sesiones_anio),
         }
 
-
+"""
+""""
 class ControladorLectura:
-    """
-    Controlador central de la Capa de Dominio.
-    Coordina la interacción entre la UI, los modelos, los servicios de cálculo y el repositorio.
-    """
+    
+    #Controlador central de la Capa de Dominio.
+    #Coordina la interacción entre la UI, los modelos, los servicios de cálculo y el repositorio.
+    
 
     def __init__(self, repositorio: IRepositorioDatos):
         self.repo = repositorio
@@ -258,3 +259,4 @@ class ControladorLectura:
             "metricas_sesion": metricas,
             "proyeccion": proyeccion,
         }
+"""

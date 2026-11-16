@@ -1,5 +1,4 @@
 import uuid
-from typing import Optional
 
 
 class Libro:
@@ -12,8 +11,8 @@ class Libro:
         autor: str,
         genero: str,
         total_paginas: int,
-        id_libro: Optional[str] = None,
-        portada_url: Optional[str] = None,
+        id_libro: str | None = None,
+        portada_url: str | None = None,
     ):
         if total_paginas <= 0:
             raise ValueError("El total de páginas debe ser mayor a cero.")

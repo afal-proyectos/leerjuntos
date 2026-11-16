@@ -1,7 +1,6 @@
 import uuid
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Optional
 
 
 class EstadoSesion(Enum):
@@ -20,19 +19,19 @@ class SesionLectura:
         libro_id: str,
         usuario_id: str,
         pagina_inicio: int,
-        id_sesion: Optional[str] = None,
+        id_sesion: str | None = None,
     ):
         self.id_sesion = id_sesion if id_sesion else str(uuid.uuid4())
         self.libro_id = libro_id
         self.usuario_id = usuario_id
         self.pagina_inicio = pagina_inicio
-        self.pagina_fin: Optional[int] = None
+        self.pagina_fin: str | None = None
 
-        self.inicio_utc: Optional[datetime] = None
-        self.fin_utc: Optional[datetime] = None
+        self.inicio_utc: str | None = None
+        self.fin_utc: str | None = None
         self.minutos_pausa: float = 0.0
         # Recordatorio: agregar al diagrama
-        self._inicio_pausa_temp: Optional[datetime] = None
+        self._inicio_pausa_temp: str | None = None
         self.estado: EstadoSesion = EstadoSesion.INACTIVA
 
     def iniciar(self) -> None:

@@ -31,5 +31,16 @@
         "fin_utc": "2026-11-16T15:15:24.488595+00:00",
         "minutos_pausa": 0.0,
         "estado": "GUARDADA"
+    },
+    {
+        "id_sesion": "0a3411fa-1404-428b-abc1-a417d790f1e1",
+        "libro_id": "73d249b7-5e21-4c86-a4cd-e26be5d76fb0",
+        "usuario_id": "usuario_afal_demo",
+        "pagina_inicio": 0,
+        "pagina_fin": 5,
+        "inicio_utc": "2026-11-16T16:17:28.506499+00:00",
+        "fin_utc": "2026-11-16T16:21:09.034760+00:00",
+        "minutos_pausa": 0.0,
+        "estado": "GUARDADA"
     }
 ]

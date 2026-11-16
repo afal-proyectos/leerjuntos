@@ -1,13 +1,12 @@
 # import time
 # from typing import Optional
 
+from dominio.calcular_proyecciones import CalculadorProyecciones
+from dominio.controlador_lectura import ControladorLectura
 from dominio.models_sesion import EstadoSesion
-from dominio.servicio import (
-    CalculadorProyecciones,
-    ControladorLectura,
-    # ServicioMetricasLibro,
-    ServicioMetricasPersonal,
-)
+
+# from dominio.servicio_metricaslibro import ServicioMetricasLibro
+from dominio.servicio_metricaspersonal import ServicioMetricasPersonal
 
 
 class CLI:

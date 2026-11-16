@@ -7,5 +7,14 @@
         "genero": "Novela Clásdica Española",
         "total_paginas": 500,
         "portada_url": ""
+    },
+    {
+        "id_libro": "73d249b7-5e21-4c86-a4cd-e26be5d76fb0",
+        "usuario_id": "usuario_afal_demo",
+        "titulo": "Cien años de soledad",
+        "autor": "G.G. Marquez",
+        "genero": "Lteratura Latinoamericana",
+        "total_paginas": 600,
+        "portada_url": ""
     }
 ]

@@ -4,7 +4,7 @@ import sys
 # Añadir directorio 'src' al path de Python
 sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 
-from src.dominio.servicio import ControladorLectura
+from src.dominio.controlador_lectura import ControladorLectura
 from src.persistencia.repo_json import RepositorioJSON
 from src.presentacion.cliente import CLI
 
