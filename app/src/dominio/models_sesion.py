@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Optional
 
@@ -37,19 +37,19 @@ class SesionLectura:
 
     def iniciar(self) -> None:
         """Transiciona a LEYENDO y registra la marca de tiempo de inicio UTC."""
-        self.inicio_utc = datetime.now(timezone.utc)
+        self.inicio_utc = datetime.now(UTC)
         self.estado = EstadoSesion.LEYENDO
 
     def pausar(self) -> None:
         """Transiciona a PAUSADA y registra el inicio del intervalo de pausa."""
         if self.estado == EstadoSesion.LEYENDO:
-            self._inicio_pausa_temp = datetime.now(timezone.utc)
+            self._inicio_pausa_temp = datetime.now(UTC)
             self.estado = EstadoSesion.PAUSADA
 
     def reanudar(self) -> None:
         """Reanuda la lectura acumulando la duración del intervalo de pausa."""
         if self.estado == EstadoSesion.PAUSADA and self._inicio_pausa_temp:
-            ahora = datetime.now(timezone.utc)
+            ahora = datetime.now(UTC)
             delta_pausa = (ahora - self._inicio_pausa_temp).total_seconds() / 60.0
             self.minutos_pausa += delta_pausa
             self._inicio_pausa_temp = None
@@ -63,7 +63,7 @@ class SesionLectura:
         if pagina_fin < self.pagina_inicio:
             raise ValueError("La página final no puede ser menor a la página inicial.")
 
-        self.fin_utc = datetime.now(timezone.utc)
+        self.fin_utc = datetime.now(UTC)
         self.pagina_fin = pagina_fin
         self.estado = EstadoSesion.FINALIZADA
 
