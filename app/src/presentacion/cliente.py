@@ -5,7 +5,7 @@ from dominio.models_sesion import EstadoSesion
 from dominio.servicio import (
     CalculadorProyecciones,
     ControladorLectura,
-    ServicioMetricasLibro,
+    # ServicioMetricasLibro,
     ServicioMetricasPersonal,
 )
 

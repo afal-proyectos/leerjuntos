@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional  # list
+from typing import Optional
 
 from dominio.models_libro import Libro
 from dominio.models_sesion import SesionLectura

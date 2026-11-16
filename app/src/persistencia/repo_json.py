@@ -1,6 +1,6 @@
 import json
 import os
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Optional
 
 from dominio.models_libro import Libro
