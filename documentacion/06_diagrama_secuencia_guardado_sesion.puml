@@ -1,0 +1,85 @@
+@startuml 06_secuencia_guardar_sesion
+autonumber
+skinparam BoxPadding 10
+skinparam ParticipantPadding 10
+
+actor "Lector" as lector
+
+box "Capa de Presentación (UI)" #LightBlue
+participant "CLI / VistaSesionActiva" as UI
+end box
+
+box "Capa de Dominio (Lógica de Negocio)" #LightGreen
+participant "ControladorLectura" as ctrl
+participant "sesion: SesionLectura" as sesion
+participant "libro: Libro" as libro
+participant "ServicioMetricas" as metricas
+end box
+
+box "Capa de Persistencia (Datos)" #LightYellow
+participant "IRepositorioDatos\n(RepositorioJSON / Supabase)" as repo
+database "Almacenamiento\n(sesiones.json / DB)" as db
+end box
+
+== 1. Cierre de Cronómetro e Ingreso de Datos ==
+lector -> UI : Presiona "Detener Lectura" e ingresa pagina_fin
+activate UI
+
+UI -> ctrl : finalizar_y_guardar_sesion(id_sesion, pagina_fin, nota_opcional)
+activate ctrl
+
+== 2. Cambio de Estado y Validaciones en Dominio ==
+ctrl -> sesion : detener(pagina_fin)
+activate sesion
+
+alt pagina_fin < pagina_inicio O pagina_fin > total_paginas
+    sesion --> ctrl : raise ValueError("Página inválida")
+    ctrl --> UI : Retorna Error de Validación
+    UI --> lector : Muestra mensaje de error en pantalla
+else Validación Exitosa
+    sesion -> sesion : Registrar fin_utc = ahora()
+    sesion -> sesion : Cambiar estado a FINALIZADA
+    sesion --> ctrl : Confirmación de cierre
+    deactivate sesion
+
+    == 3. Cómputo de Métricas y Proyecciones ==
+    ctrl -> metricas : calcular_metricas_sesion(sesion, libro)
+    activate metricas
+    metricas -> sesion : calcular_minutos_netos()
+    sesion --> metricas : minutos_netos (descontando pausas)
+    
+    metricas -> sesion : calcular_paginas_leidas()
+    sesion --> metricas : paginas_leidas
+    
+    metricas -> sesion : calcular_velocidad_ppm()
+    sesion --> metricas : velocidad_ppm
+    
+    metricas -> libro : calcular_porcentaje_avance(pagina_fin)
+    libro --> metricas : porcentaje_avance (%)
+    
+    metricas --> ctrl : ResultadoMetricas (ppm, %, tiempo_neto)
+    deactivate metricas
+
+    ctrl -> sesion : set_estado(GUARDADA)
+
+    == 4. Persistencia mediante Patrón Repositorio ==
+    ctrl -> repo : registrar_sesion(sesion)
+    activate repo
+    
+    repo -> repo : to_dict() / Serializar datos
+    repo -> db : Escribir registro (JSON / SQL)
+    activate db
+    db --> repo : Ok / Éxito
+    deactivate db
+    
+    repo --> ctrl : bool (True)
+    deactivate repo
+
+    == 5. Confirmación a la Interfaz ==
+    ctrl --> UI : ResumenSesion (métricas, velocidad, proyección)
+    deactivate ctrl
+    
+    UI --> lector : Muestra resumen visual (páginas, PPM y avance %)
+    deactivate UI
+end
+@enduml

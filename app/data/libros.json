@@ -1,0 +1,11 @@
+[
+    {
+        "id_libro": "81802434-cbdc-4e86-afc1-bafba0fb0348",
+        "usuario_id": "usuario_afal_demo",
+        "titulo": "Quijote de la mancha",
+        "autor": "Miguel de  Cervantes",
+        "genero": "Novela Clásdica Española",
+        "total_paginas": 500,
+        "portada_url": ""
+    }
+]
